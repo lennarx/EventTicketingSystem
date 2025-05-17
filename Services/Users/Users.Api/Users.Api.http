@@ -1,0 +1,11 @@
+@Users.Api_HostAddress = http://localhost:5089
+
+POST https://localhost:60049/users/register
+Content-Type: application/json
+
+{
+  "email": "tigre5@jungla.com",
+  "password": "123456"
+}
+
+###
