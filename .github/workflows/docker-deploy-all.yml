@@ -28,34 +28,34 @@ jobs:
     - name: Build and push Authentication.Api
       uses: docker/build-push-action@v4
       with:
-        context: ./EventTicketingSystem/Services/Authentication/Authentication.Api
+        context: ./Services/Authentication/Authentication.Api
         push: true
         tags: ${{ env.IMAGE_PREFIX }}-auth:latest
 
     - name: Build and push Users.Api
       uses: docker/build-push-action@v4
       with:
-        context: ./EventTicketingSystem/Services/Users/Users.Api
+        context: ./Services/Users/Users.Api
         push: true
         tags: ${{ env.IMAGE_PREFIX }}-users:latest
 
     - name: Build and push Payments.Api
       uses: docker/build-push-action@v4
       with:
-        context: ./EventTicketingSystem/Services/Payments/Payments.Api
+        context: ./Services/Payments/Payments.Api
         push: true
         tags: ${{ env.IMAGE_PREFIX }}-payments:latest
 
     - name: Build and push Orchestration.Api
       uses: docker/build-push-action@v4
       with:
-        context: ./EventTicketingSystem/Services/Orchestration/Orchestration.Api
+        context: ./Services/Orchestration/Orchestration.Api
         push: true
         tags: ${{ env.IMAGE_PREFIX }}-orchestrator:latest
 
     - name: Build and push Tickets.Api
       uses: docker/build-push-action@v4
       with:
-        context: ./EventTicketingSystem/Services/Tickets/Tickets.Api
+        context: ./Services/Tickets/Tickets.Api
         push: true
         tags: ${{ env.IMAGE_PREFIX }}-tickets:latest
