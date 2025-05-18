@@ -61,23 +61,6 @@ All services are independently accessible and can be queried/tested individually
 - MediatR + Vertical Slice (Handler architecture)
 - EF Core (Relational persistence)
 - Docker & Docker Compose
-- GitHub Actions (CI/CD)
-
----
-
-## 🚀 CI/CD with GitHub Actions
-
-- A single GitHub Actions workflow (`docker-deploy-all.yml`) builds and pushes Docker images for all microservices to Docker Hub on every `main` branch push.
-- Requires repository secrets:
-  - `DOCKERHUB_USERNAME`
-  - `DOCKERHUB_PASSWORD`
-
-Each image is published under the format:
-```
-<username>/eventsystem-<service>:latest
-```
-
-> Example: `fredoni/eventsystem-auth:latest`
 
 ---
 
@@ -116,7 +99,6 @@ EventTicketingSystem/
 - Shared message contracts live in the `Shared/` project
 - GraphQL is selectively used (e.g., in Tickets)
 - Each service can be deployed and scaled independently
-- CI/CD flow ensures consistent image publishing to Docker Hub
 
 ---
 
