@@ -2,7 +2,7 @@ name: Build & Push All Microservices
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   REGISTRY: docker.io
