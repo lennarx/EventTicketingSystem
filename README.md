@@ -25,8 +25,8 @@ All services are independently accessible and can be queried/tested individually
   - Ticket reservation
   - Payment execution
   - Ticket confirmation or cancellation
-- **MassTransit** is used in all core services for publishing/consuming commands & events
-- `Authentication.Api` and `Users.Api` use direct RabbitMQ consumers for foundational simplicity
+- **MassTransit** is used where high resilience and orchestration is needed
+- **Raw RabbitMQ** used in Auth and initially in Users for simplicity and control
 
 ---
 
@@ -61,6 +61,23 @@ All services are independently accessible and can be queried/tested individually
 - MediatR + Vertical Slice (Handler architecture)
 - EF Core (Relational persistence)
 - Docker & Docker Compose
+- GitHub Actions (CI/CD)
+
+---
+
+## 🚀 CI/CD with GitHub Actions
+
+- A single GitHub Actions workflow (`docker-deploy-all.yml`) builds and pushes Docker images for all microservices to Docker Hub on every `main` branch push.
+- Requires repository secrets:
+  - `DOCKERHUB_USERNAME`
+  - `DOCKERHUB_PASSWORD`
+
+Each image is published under the format:
+```
+<username>/eventsystem-<service>:latest
+```
+
+> Example: `fredoni/eventsystem-auth:latest`
 
 ---
 
@@ -77,6 +94,7 @@ EventTicketingSystem/
 │   └── Orchestration/Orchestration.Api
 │
 ├── Shared/         # Shared contracts, events, and interfaces
+├── .github/workflows/  # CI pipeline for Docker build/push
 ├── docker-compose.yml
 └── README.md
 ```
@@ -94,20 +112,17 @@ EventTicketingSystem/
 
 ## 🔍 Observations
 
-- You can mix services with raw RabbitMQ and MassTransit as long as message contracts are consistent
-- Events follow a shared DTO contract in the `Shared/` project
-- GraphQL is used selectively (e.g., in Tickets)
-- Each microservice can be scaled and deployed independently
+- Services can mix raw RabbitMQ and MassTransit as long as contracts are consistent
+- Shared message contracts live in the `Shared/` project
+- GraphQL is selectively used (e.g., in Tickets)
+- Each service can be deployed and scaled independently
+- CI/CD flow ensures consistent image publishing to Docker Hub
 
 ---
 
-## 🚀 Next Steps
+## 🧩 Next Steps
 
 - Add Outbox Pattern to ensure event delivery consistency
 - Add Distributed Tracing (OpenTelemetry)
-- Health checks + readiness probes for container orchestration
+- Health checks + readiness probes for orchestration
 - Saga tracking dashboard (e.g., Automatonymous + MongoDB)
-
----
-
-**Feel free to fork, extend, or contribute.** Built to be modular, testable, and production-ready. 🔥
