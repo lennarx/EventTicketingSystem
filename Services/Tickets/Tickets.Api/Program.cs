@@ -40,7 +40,7 @@ public class Program
         builder.Services.AddHostedService<UserRegisteredEventConsumer>();
         builder.Services.AddAuthenticationServices(builder.Configuration);
         builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        builder.Services.AddScoped<ITicketService, TicketService>();
+        builder.Services.AddScoped<IReservationService, ReservationService>();
 
         builder.Services
             .AddGraphQLServer()

@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Shared.Messaging.Events.Tickets;
-using Shared.Messaging.Interfaces;
 using Tickets.Application.Dtos;
 using Tickets.Application.Mappers;
 using Tickets.Application.Services;
@@ -10,25 +8,25 @@ using Tickets.Infrastructure.Repositories;
 
 namespace Tickets.Infrastructure.Services
 {
-    public class TicketService : ITicketService
+    public class ReservationService : IReservationService
     {
         private readonly IRepository<Ticket> _repository;
 
-        public TicketService(IRepository<Ticket> repository)
+        public ReservationService(IRepository<Ticket> repository)
         {
             _repository = repository;
         }
 
-        public async Task<TicketDto> CancelReservationAsync(Guid reservationId)
+        public async Task<ReservationDto> CancelReservationAsync(Guid reservationId)
         {
             var ticketsToCancel = _repository.GetByCondition(x => x.ReservationId == reservationId);
             if (ticketsToCancel == null || !ticketsToCancel.Any())
-                return null;
+                return new ReservationDto();
 
             var ticketsCancelled = ticketsToCancel.Select(x => CancelTicket(x));
             await _repository.UpdateRangeAsync(ticketsCancelled);
 
-            return new TicketDto
+            return new ReservationDto
             {
                 EventId = ticketsToCancel.First().EventId,
                 ReservationId = reservationId,
@@ -36,21 +34,21 @@ namespace Tickets.Infrastructure.Services
             };
         }
 
-        public async Task<TicketDto> ConfirmReservationAsync(Guid reservationId)
+        public async Task<ReservationDto> ConfirmReservationAsync(Guid reservationId)
         {
             var ticketsToConfirm = _repository.GetByCondition(x => x.ReservationId == reservationId);
             if (ticketsToConfirm == null || ticketsToConfirm.Count() == 0 || ticketsToConfirm.Any(x => x.Status != TicketStatusEnum.Reserved))
-                return null;
+                return new ReservationDto();
 
             var confirmedTickets = ticketsToConfirm.Select(ticket => ConfirmTicket(ticket));
             await _repository.UpdateRangeAsync(confirmedTickets);
 
-            return new TicketDto
+            return new ReservationDto
             {
                 ReservationId = reservationId,
                 EventId = ticketsToConfirm.First().EventId,
                 UserId = ticketsToConfirm.First().UserId,
-                TicketStatus = nameof(TicketStatusEnum.Confirmed),
+                ReservationStatus = nameof(TicketStatusEnum.Confirmed),
             };
         }
 
@@ -62,20 +60,6 @@ namespace Tickets.Infrastructure.Services
         public IEnumerable<TicketDto> GetTicketByUserId(Guid id)
         {
             return _repository.GetByCondition(x => x.UserId == id).MapToDtos();
-        }
-
-        public async Task<bool> MarkAsUsedAsync(Guid ticketId)
-        {
-            var ticketToUpdate = await _repository.GetByIdAsync(ticketId);
-            if (ticketToUpdate == null || ticketToUpdate.Status != TicketStatusEnum.Confirmed)
-                return false;
-
-            ticketToUpdate.Status = TicketStatusEnum.Used;
-            ticketToUpdate.UpdatedAt = DateTime.UtcNow;
-
-            await _repository.UpdateAsync(ticketToUpdate);
-
-            return true;
         }
 
         public async Task<IEnumerable<TicketDto>> ReserveTicketsAsync(Guid eventId, Guid userId, int quantity)

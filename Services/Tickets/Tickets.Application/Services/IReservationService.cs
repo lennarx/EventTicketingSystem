@@ -2,14 +2,13 @@
 
 namespace Tickets.Application.Services
 {
-    public interface ITicketService
+    public interface IReservationService
     {
         IEnumerable<TicketDto> GetTicketByUserId(Guid id);
         Task<TicketDto> GetTicketById(Guid id);
         Task<IEnumerable<TicketDto>> ReserveTicketsAsync(Guid eventId, Guid userId, int quantity);
-        Task<TicketDto> ConfirmReservationAsync(Guid reservationId);
-        Task<TicketDto> CancelReservationAsync(Guid reservationId);
-        Task<bool> MarkAsUsedAsync(Guid ticketId);
+        Task<ReservationDto> ConfirmReservationAsync(Guid reservationId);
+        Task<ReservationDto> CancelReservationAsync(Guid reservationId);
 
     }
 }

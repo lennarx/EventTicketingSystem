@@ -7,9 +7,9 @@ namespace Tickets.Api.Consumers
 {
     public class CancelReservationCommandConsumer : IConsumer<CancelReservationCommand>
     {
-        private readonly ITicketService _ticketService;
+        private readonly IReservationService _ticketService;
         private readonly IPublishEndpoint _publishEndpoint;
-        public CancelReservationCommandConsumer(ITicketService ticketService, IPublishEndpoint publishEndpoint)
+        public CancelReservationCommandConsumer(IReservationService ticketService, IPublishEndpoint publishEndpoint)
         {
             _ticketService = ticketService;
             _publishEndpoint = publishEndpoint;
@@ -17,13 +17,14 @@ namespace Tickets.Api.Consumers
         public async Task Consume(ConsumeContext<CancelReservationCommand> context)
         {
             var command = context.Message;
-            var ticketConfirmation = await _ticketService.CancelReservationAsync(command.ReservationId);
+            var reservationConfirmation = await _ticketService.CancelReservationAsync(command.ReservationId);
 
-            await _publishEndpoint.Publish(new ReservationCanceledEvent
-            {
-                ReservationId = command.ReservationId,
-                UserId = ticketConfirmation.UserId,
-            });
+            if (reservationConfirmation.ReservationId != Guid.Empty)
+                await _publishEndpoint.Publish(new ReservationCanceledEvent
+                {
+                    ReservationId = command.ReservationId,
+                    UserId = reservationConfirmation.UserId,
+                });
         }
     }
 }

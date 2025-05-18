@@ -7,9 +7,9 @@ namespace Tickets.Api.Consumers
 {
     public class ConfirmReservationCommandConsumer : IConsumer<ConfirmReservationCommand>
     {
-        private readonly ITicketService _ticketService;
+        private readonly IReservationService _ticketService;
         private readonly IPublishEndpoint _publishEndpoint;
-        public ConfirmReservationCommandConsumer(ITicketService ticketService, IPublishEndpoint publishEndpoint)
+        public ConfirmReservationCommandConsumer(IReservationService ticketService, IPublishEndpoint publishEndpoint)
         {
             _ticketService = ticketService;
             _publishEndpoint = publishEndpoint;
@@ -17,13 +17,16 @@ namespace Tickets.Api.Consumers
         public async Task Consume(ConsumeContext<ConfirmReservationCommand> context)
         {
             var command = context.Message;
-            var ticketConfirmation = await _ticketService.ConfirmReservationAsync(command.ReservationId);
+            var reservationConfirmation = await _ticketService.ConfirmReservationAsync(command.ReservationId);
 
-            await _publishEndpoint.Publish(new ReservationConfirmedEvent
+            if(reservationConfirmation.ReservationId != Guid.Empty)
             {
-                ReservationId = command.ReservationId,
-                UserId = ticketConfirmation.UserId,
-            });
+                await _publishEndpoint.Publish(new ReservationConfirmedEvent
+                {
+                    ReservationId = command.ReservationId,
+                    UserId = reservationConfirmation.UserId,
+                });
+            }            
         }
     }
 }

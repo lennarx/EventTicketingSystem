@@ -7,9 +7,9 @@ namespace Tickets.Api.Consumers
 {
     public class CreateReservationCommandConsumer : IConsumer<CreateReservationCommand>
     {
-        private readonly ITicketService _ticketService;
+        private readonly IReservationService _ticketService;
         private readonly IPublishEndpoint _publishEndpoint;
-        public CreateReservationCommandConsumer(ITicketService ticketService, IPublishEndpoint publishEndpoint)
+        public CreateReservationCommandConsumer(IReservationService ticketService, IPublishEndpoint publishEndpoint)
         {
             _ticketService = ticketService;
             _publishEndpoint = publishEndpoint;
