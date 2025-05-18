@@ -30,6 +30,7 @@ builder.Services.AddMassTransit(x =>
     });
 });
 builder.Services.AddApplicationServices(typeof(Program).Assembly, addEventPublisher: false);
+builder.Services.AddAuthenticationServices(builder.Configuration);
 
 builder.Services.AddControllers();
 
@@ -41,6 +42,6 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.Run();
